@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = '\u{1F49C} by ClickUp Brain';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Find a match | Loop</title><style>:root{--bg:#f7f6fb;--card:#fff;--ink:#251f33;--muted:#756d82;--line:#e5e0eb;--brand:#6950d8;--deep:#2c2342;--green:#b8e65d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,Arial,sans-serif;padding-left:248px}.sidebar{position:fixed;inset:0 auto 0 0;width:248px;background:var(--deep);color:white;padding:24px 18px}.brand{font-size:22px;font-weight:850;padding:8px 10px 30px}.sidebar nav{display:grid;gap:6px}.sidebar nav a{height:46px;border-radius:11px;padding:12px 13px;color:#ddd5e8;text-decoration:none;font-weight:700}.sidebar nav a.active,.sidebar nav a:hover{background:#493a70;color:white}.top{height:72px;background:white;border-bottom:1px solid var(--line);padding:22px 55px;font-weight:800}.page{padding:50px 55px;max-width:1240px;margin:auto}.head h1{font-size:clamp(40px,5vw,62px);line-height:1;letter-spacing:-.055em;margin:0 0 12px}.head p{color:var(--muted);margin:0 0 30px}.tabs{display:flex;gap:5px;padding:5px;background:#ece9f1;border-radius:13px;width:max-content;max-width:100%;overflow:auto;margin-bottom:26px}.tab{height:42px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-weight:800;padding:0 16px;white-space:nowrap}.tab.active{background:white;color:var(--brand);box-shadow:0 2px 8px #21182d16}.filterbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.filterbar select{height:42px;border:1px solid var(--line);border-radius:10px;background:white;padding:0 12px}.creators{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:15px}.creator{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;min-height:245px}.creator-top{display:flex;gap:12px;align-items:center}.avatar{width:46px;height:46px;border-radius:13px;background:#eee9fb;color:var(--brand);display:grid;place-items:center;font-weight:850}.creator small{display:block;color:var(--muted)}.chips{display:flex;gap:7px;margin:15px 0}.chips span{font-size:12px;font-weight:800;background:#eee9fb;color:var(--brand);padding:5px 9px;border-radius:99px}.creator p{color:var(--muted);font-size:14px}.creator-actions{display:flex;gap:8px;margin-top:auto}.button{min-height:43px;border:0;border-radius:11px;background:var(--brand);color:white;font-weight:800;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer}.secondary{background:white;color:var(--ink);border:1px solid var(--line)}.creator-actions .button{flex:1}.callout{background:var(--deep);color:white;border-radius:21px;padding:45px;display:flex;align-items:center;justify-content:space-between;gap:25px}.callout h2{font-size:40px;margin:0 0 9px}.callout p{color:#cfc7da}.callout .button{background:var(--green);color:var(--deep)}.list{background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden}.request-row{padding:16px 19px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:46px 1fr auto;gap:13px;align-items:center}.empty{text-align:center;padding:50px;color:var(--muted)}.mobile{display:none}#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--deep);color:white;padding:12px 16px;border-radius:10px;display:none}#toast.show{display:block}@media(max-width:850px){body{padding-left:0;padding-bottom:70px}.sidebar{display:none}.page{padding:35px 20px}.top{padding:22px}.mobile{display:flex;position:fixed;bottom:0;left:0;right:0;height:68px;background:white;border-top:1px solid var(--line);justify-content:space-around;align-items:center}.mobile a{text-decoration:none;color:var(--muted)}.mobile a.active{color:var(--brand)}.callout{align-items:flex-start;flex-direction:column}.request-row{grid-template-columns:46px 1fr}.request-row>div{grid-column:1/-1}}</style></head><body data-page="match"><aside class="sidebar"><div class="brand">Loop</div><nav><a href="dashboard.html">Dashboard</a><a class="active" href="match.html">Find a match</a><a href="trades.html">My loops</a><a href="profile.html">Profile</a></nav></aside><header class="top">Find a match</header><main class="page"><div class="head"><h1>Meet a creator worth following.</h1><p>Browse freely or let Loop select an available profile.</p></div><div class="tabs"><button class="tab active" data-tab="browse">Browse &amp; pick</button><button class="tab" data-tab="category">Category match</button><button class="tab" data-tab="random">Random pair</button><button class="tab" data-tab="requests">Requests <span id="requestCount"></span></button></div><section id="browse" class="tab-panel"><div class="filterbar"><h3>Available creators</h3><select id="filter"><option value="all">All categories</option><option>Tech</option><option>Gaming</option><option>Education</option><option>Entertainment</option><option>Music</option><option>Lifestyle</option></select></div><div id="creatorList" class="creators"></div></section><section id="category" class="tab-panel" hidden><div class="callout"><div><h2>Stay inside your niche</h2><p>Pick a completed profile in your category.</p></div><button id="categoryBtn" class="button">Find category match</button></div></section><section id="random" class="tab-panel" hidden><div class="callout"><div><h2>Let Loop choose</h2><p>Pick from all other completed creator profiles.</p></div><button id="randomBtn" class="button">Pick someone</button></div></section><section id="requests" class="tab-panel" hidden><div id="requestList" class="list"></div></section></main><nav class="mobile"><a href="dashboard.html">Home</a><a class="active" href="match.html">Match</a><a href="trades.html">Loops</a><a href="profile.html">Profile</a></nav><div id="toast"></div><script type="module" src="app.js"></script></body></html>

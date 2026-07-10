@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = '\u{1F49C} by ClickUp Brain';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Profile | Loop</title><style>:root{--bg:#f7f6fb;--ink:#251f33;--muted:#756d82;--line:#e5e0eb;--brand:#6950d8;--deep:#2c2342;--green:#b8e65d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,Arial,sans-serif;padding-left:248px}.sidebar{position:fixed;inset:0 auto 0 0;width:248px;background:var(--deep);padding:28px 18px;color:white}.brand{font-size:22px;font-weight:850;padding:0 10px 28px}.sidebar nav{display:grid;gap:6px}.sidebar a{height:46px;padding:12px 13px;border-radius:11px;color:#ddd5e8;text-decoration:none;font-weight:700}.sidebar a.active{background:#493a70;color:white}.top{height:72px;background:white;border-bottom:1px solid var(--line);padding:22px 55px;font-weight:800}.page{padding:50px 55px;max-width:1080px;margin:auto}.head h1{font-size:clamp(40px,5vw,60px);line-height:1;letter-spacing:-.055em;margin:0 0 12px}.head p{color:var(--muted);margin:0 0 30px}.layout{display:grid;grid-template-columns:250px 1fr;gap:22px}.identity{background:var(--deep);color:white;border-radius:19px;padding:25px;height:max-content}.avatar{width:72px;height:72px;border-radius:19px;background:#eee9fb;color:var(--brand);display:grid;place-items:center;font-size:26px;font-weight:850}.identity p{display:flex;justify-content:space-between;border-top:1px solid #4b405c;padding-top:13px;color:#c3bacd}.identity b{color:var(--green)}.card{background:white;border:1px solid var(--line);border-radius:19px;padding:32px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.field{display:grid;gap:8px}.full{grid-column:1/-1}label{font-weight:750;font-size:14px}input,select,textarea{width:100%;min-height:49px;border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fcfbfd;font:inherit}textarea{min-height:112px}.actions{display:flex;justify-content:flex-end;margin-top:22px}button{height:46px;border:0;border-radius:11px;background:var(--brand);color:white;padding:0 20px;font-weight:800}.mobile{display:none}#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--deep);color:white;padding:12px 16px;border-radius:10px;display:none}#toast.show{display:block}@media(max-width:850px){body{padding-left:0;padding-bottom:70px}.sidebar{display:none}.page{padding:35px 20px}.top{padding:22px}.layout,.grid{grid-template-columns:1fr}.full{grid-column:auto}.mobile{display:flex;position:fixed;bottom:0;left:0;right:0;height:68px;background:white;border-top:1px solid var(--line);justify-content:space-around;align-items:center}.mobile a{text-decoration:none;color:var(--muted)}.mobile a.active{color:var(--brand)}}</style></head><body data-page="profile"><aside class="sidebar"><div class="brand">Loop</div><nav><a href="dashboard.html">Dashboard</a><a href="match.html">Find a match</a><a href="trades.html">My loops</a><a class="active" href="profile.html">Profile</a></nav></aside><header class="top">Profile</header><main class="page"><div class="head"><h1>Your creator profile</h1><p>Keep it accurate so matching works properly.</p></div><div class="layout"><aside class="identity"><div id="profileAvatar" class="avatar">C</div><h3 id="profileName">Creator</h3><p><span>Reputation</span><b id="profileRep">50</b></p><p><span>Completed</span><b id="profileLoops">0</b></p></aside><section class="card"><form id="profileForm"><div class="grid"><div class="field"><label>Channel name</label><input id="channelName" required></div><div class="field"><label>Channel URL</label><input id="channelUrl" type="url" required></div><div class="field"><label>Category</label><select id="category"><option>Tech</option><option>Gaming</option><option>Education</option><option>Entertainment</option><option>Music</option><option>Lifestyle</option></select></div><div class="field"><label>Language</label><select id="language"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Bengali</option><option>Tamil</option><option>Telugu</option><option>Other</option></select></div><div class="field"><label>Subscriber range</label><select id="subscriberRange"><option>0-99</option><option>100-499</option><option>500-999</option><option>1K-4.9K</option><option>5K-24.9K</option><option>25K+</option></select></div><div class="field full"><label>Description</label><textarea id="bio" maxlength="240" required></textarea></div></div><div class="actions"><button type="submit">Save changes</button></div></form></section></div></main><nav class="mobile"><a href="dashboard.html">Home</a><a href="match.html">Match</a><a href="trades.html">Loops</a><a class="active" href="profile.html">Profile</a></nav><div id="toast"></div><script type="module" src="app.js"></script></body></html>
