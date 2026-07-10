@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function owns(uid) { return signedIn() && request.auth.uid == uid; }
+    function participant(matchId) {
+      return signedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/matches/$(matchId)).data.participantIds;
+    }
+
+    match /users/{uid} {
+      allow create, read, update: if owns(uid);
+      allow delete: if false;
+    }
+
+    match /publicProfiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if owns(uid) && request.resource.data.uid == uid;
+      allow delete: if owns(uid);
+    }
+
+    match /matchRequests/{requestId} {
+      // Signed-in read is required for duplicate checks and request inbox queries.
+      // Request documents contain creator names and IDs only, never private emails.
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.recipientId != request.auth.uid
+        && request.resource.data.participantIds.size() == 2
+        && request.auth.uid in request.resource.data.participantIds
+        && request.resource.data.recipientId in request.resource.data.participantIds
+        && request.resource.data.status == 'pending';
+      allow update: if signedIn()
+        && request.auth.uid == resource.data.recipientId
+        && resource.data.status == 'pending'
+        && request.resource.data.senderId == resource.data.senderId
+        && request.resource.data.recipientId == resource.data.recipientId
+        && request.resource.data.participantIds == resource.data.participantIds
+        && request.resource.data.status in ['accepted','rejected'];
+      allow delete: if false;
+    }
+
+    match /matches/{matchId} {
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.participantIds
+        && request.resource.data.participantIds.size() == 2
+        && request.resource.data.creatorAId in request.resource.data.participantIds
+        && request.resource.data.creatorBId in request.resource.data.participantIds
+        && request.resource.data.creatorAId != request.resource.data.creatorBId
+        && request.resource.data.status == 'matched';
+      allow read: if signedIn() && request.auth.uid in resource.data.participantIds;
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.participantIds
+        && request.resource.data.participantIds == resource.data.participantIds
+        && request.resource.data.creatorAId == resource.data.creatorAId
+        && request.resource.data.creatorBId == resource.data.creatorBId
+        && request.resource.data.status in ['matched','completed'];
+      allow delete: if false;
+
+      match /proofs/{uid} {
+        allow read: if participant(matchId);
+        allow create: if participant(matchId)
+          && owns(uid)
+          && request.resource.data.ownerId == uid
+          && request.resource.data.imageUrl is string
+          && request.resource.data.publicId is string
+          && request.resource.data.bytes is int
+          && request.resource.data.bytes <= 5242880
+          && request.resource.data.format in ['jpg','jpeg','png','webp'];
+        allow update, delete: if false;
+      }
+
+      match /confirmations/{uid} {
+        allow read: if participant(matchId);
+        allow create: if participant(matchId)
+          && owns(uid)
+          && request.resource.data.ownerId == uid
+          && request.resource.data.confirmedUserId != uid
+          && request.resource.data.confirmedUserId in get(/databases/$(database)/documents/matches/$(matchId)).data.participantIds
+          && exists(/databases/$(database)/documents/matches/$(matchId)/proofs/$(request.resource.data.confirmedUserId));
+        allow update, delete: if false;
+      }
+
+      match /reports/{uid} {
+        allow read: if owns(uid);
+        allow create: if participant(matchId)
+          && owns(uid)
+          && request.resource.data.reporterId == uid
+          && request.resource.data.reportedUserId != uid
+          && request.resource.data.reason is string
+          && request.resource.data.reason.size() >= 10
+          && request.resource.data.reason.size() <= 500;
+        allow update, delete: if false;
+      }
+    }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}
